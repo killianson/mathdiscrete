@@ -18,6 +18,10 @@ post :Un vecteur x contenant les scores d’importance des noeuds ordonnés dans
 le même ordre que la matrice d’adjacence.
 """
 def pageRankPower(A, alpha, v):
+    """
+        Renvoie la matrice de probabilité d'une matrice A
+        (A est une matrice numpy)
+        """
     def ToProb(A):
         b = []
         for i in range(len(A)):
