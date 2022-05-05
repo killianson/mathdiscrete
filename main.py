@@ -7,7 +7,7 @@ v : Vecteur de personalisation
 post : 
 vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
 """
-def pageRankLinear(A, alpha, v):
+def pageRankPower(A, alpha, v):
     pass
 """
 pre :
@@ -17,11 +17,7 @@ v : Vecteur de personalisation
 post :Un vecteur x contenant les scores d’importance des noeuds ordonnés dans
 le même ordre que la matrice d’adjacence.
 """
-def pageRankPower(A, alpha, v):
-    """
-        Renvoie la matrice de probabilité d'une matrice A
-        (A est une matrice numpy)
-        """
+def pageRankLinear(A, alpha, v):
     def ToProb(A):
         b = []
         for i in range(len(A)):
@@ -36,7 +32,18 @@ def pageRankPower(A, alpha, v):
                     b[i].append(A[i,j]/sum)
         p = np.array(b)
         return p
-    pass
+    def page_rank_main(A,alpha,v):
+        P = ToProb(A)
+        v1 = []
+        for i in range(len(P[0])):
+            v1.append(v[i])
+        v1 = np.array(v1)
+        e = np.ones((len(P[0]),1))
+        vt = v1.T
+        return alpha*P + (1-alpha)*e*vt
+    G = page_rank_main(A,alpha,v)
+    G = ToProb(G)
+    return G
 
 """res
 Vous devez donc calculer les scores PageRank de deux façons différentes :
