@@ -18,6 +18,20 @@ post :Un vecteur x contenant les scores d’importance des noeuds ordonnés dans
 le même ordre que la matrice d’adjacence.
 """
 def pageRankPower(A, alpha, v):
+    def ToProb(A):
+        b = []
+        for i in range(len(A)):
+            sum = 0
+            b.append([])
+            for j in range(len(A[i])):
+                sum += A[i][j]
+            for j in range(len(A[i])):
+                if A[i,j] == 0:
+                    b[i].append(0)
+                else:
+                    b[i].append(A[i,j]/sum)
+        p = np.array(b)
+        return p
     pass
 
 """res
