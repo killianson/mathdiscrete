@@ -1,4 +1,53 @@
 import numpy as np
+
+
+def pageRankLinear(A, alpha, v):
+    """
+    pre :
+    A : Une matrix numpy, une matrice d'adjacence d'un graphe dirigé, pondéré et régulier G
+    alpha : un float ,qui est le paramètre de téléportation(entre 0 et 1 ) 0.9 par défaut
+    v : Vecteur de personalisation
+    post :
+    vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
+    """
+    def get_stochastic_matrix(A):
+        """
+        Retourne la matrice stochastique (la somme des éléments de chaque ligne vaut 1)
+        """
+        n = len(A)
+        P = np.zeros((n, n))
+        for i in range(n):
+            sum = 0
+            for j in A[i]:
+                sum += j
+            for j in range(n):
+                P[i, j] = A[i, j] / sum
+        return P
+
+    def update_until_converge(P, v):
+        """
+        Produit entre P et v jusqu'à ce que v converge
+        """
+        new_vector = np.matmul(P, v)
+        loop = True
+        while loop:
+            v = new_vector
+            new_vector = np.matmul(P, new_vector)
+            for i in range(len(v)):
+                if abs(v[0] - new_vector[0]) < 10e-10 and abs(v[1] - new_vector[1]) < 10e-10 and abs(
+                        v[0] - new_vector[0]) < 10e-10:
+                    loop = False
+        return new_vector
+
+    # Matrice stochastic : la somme des éléments de chaque ligne vaut 1
+    P = get_stochastic_matrix(A)
+
+    # Mettre à jour le vecteur de personnalisation jusqu'à convergence
+    return update_until_converge(P.T, v)
+
+
+
+
 def pageRankPower(A, alpha = 0.9, v=vector):
     """
     pre :
@@ -46,32 +95,12 @@ def pageRankPower(A, alpha = 0.9, v=vector):
         v1 = v2
     return v1
 
-def pageRankLinear(A, alpha, v):
-    pass
-"""
-pre :
-A : Une matrix numpy, une matrice d'adjacence d'un graph dirigé, pndérer et régulier G
-alpha : un float ,qui est le paramètre de téléportation(entre 0 et 1 ) 0.9 par défaut 
-v : Vecteur de personalisation
-post :Un vecteur x contenant les scores d’importance des noeuds ordonnés dans
-le même ordre que la matrice d’adjacence.
-"""
 
-"""res
-Vous devez donc calculer les scores PageRank de deux façons différentes :
-– En Python, en résolvant un système d’équations linéaires. Pour cette technique, vous
-pouvez utiliser les fonctions numpy permettant de résoudre un système d’équations
-linéaires.
-– En Python, en calculant le vecteur propre dominant de gauche de la matrice Google,
-en utilisant la power method. Pour cette technique, vous devez implémenter vousmême la power method, et donc la boucle permettant de calculer le vecteur propre
-dominant de gauche de la matrice.
-"""
-
-"""
-main lit un fichier csv
-contenant la matrice d’adjacence A du graphe présenté ci-dessous (séparez vos valeurs par
-une virgule et chaque ligne de la matrice par un passage à la ligne), qui exécute le calcul de
-PageRank (via vos méthodes pageRankPower et pageRankLinear) et imprime les résultats
-"""
 def main():
+    """
+    main lit un fichier csv
+    contenant la matrice d’adjacence A du graphe présenté ci-dessous (séparez vos valeurs par
+    une virgule et chaque ligne de la matrice par un passage à la ligne), qui exécute le calcul de
+    PageRank (via vos méthodes pageRankPower et pageRankLinear) et imprime les résultats
+    """
     pass
