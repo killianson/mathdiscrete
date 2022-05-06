@@ -1,13 +1,52 @@
 import numpy as np
-"""
-pre :
-A : Une matrix numpy, une matrice d'adjacence d'un graph dirigé, pndérer et régulier G
-alpha : un float ,qui est le paramètre de téléportation(entre 0 et 1 ) 0.9 par défaut 
-v : Vecteur de personalisation
-post : 
-vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
-"""
-def pageRankPower(A, alpha, v):
+def pageRankPower(A, alpha = 0.9, v=vector):
+    """
+    pre :
+    A : Une matrix numpy, une matrice d'adjacence d'un graph dirigé, pndérer et régulier G
+    alpha : un float ,qui est le paramètre de téléportation(entre 0 et 1 ) 0.9 par défaut 
+    v : Vecteur de personalisation
+    post : 
+    vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
+    """
+    def ToProb(A):#détermine la matrice de probabilité de la matrice A
+        b = []
+        for i in range(len(A)):
+            sum = 0
+            b.append([])
+            for j in range(len(A[i])):
+                sum += A[i][j]
+            for j in range(len(A[i])):
+                if A[i, j] == 0:
+                    b[i].append(0)
+                else:
+                    b[i].append(A[i, j] / sum)
+        p = np.array(b)
+        return p
+    def vecteur_taille(A,vect = v):#ajustement de la taille du vecteur pour certains test
+        l = []
+        for i in range(len(A[0])):
+            l.append(vect[i])
+        v = np.array(l)
+        return v.T
+    def M_chap(P = ToProb(A), a = alpha):#Détermine G
+        E = np.ones((len(P[0]), len(P)))
+        return ((alpha*P) + (1-alpha)*(E/(len(P))))
+    def new_v2(P,v):#détermine p@v, à refaire car on peut pas utiliser numpy pour ça je pense 
+        return P@v
+    M2 = M_chap()
+    v1 = vecteur_taille(A, v)
+    max_iter = 100
+    psy = 0.005
+    for i in range(max_iter):
+        v2 = new_v2(M2,v1)
+        if np.linalg.norm(v2 - v1,1) < psy:
+            print("fini")
+            print(i)
+            break
+        v1 = v2
+    return v1
+
+def pageRankLinear(A, alpha, v):
     pass
 """
 pre :
@@ -17,33 +56,6 @@ v : Vecteur de personalisation
 post :Un vecteur x contenant les scores d’importance des noeuds ordonnés dans
 le même ordre que la matrice d’adjacence.
 """
-def pageRankLinear(A, alpha, v):
-    def ToProb(A):
-        b = []
-        for i in range(len(A)):
-            sum = 0
-            b.append([])
-            for j in range(len(A[i])):
-                sum += A[i][j]
-            for j in range(len(A[i])):
-                if A[i,j] == 0:
-                    b[i].append(0)
-                else:
-                    b[i].append(A[i,j]/sum)
-        p = np.array(b)
-        return p
-    def page_rank_main(A,alpha,v):
-        P = ToProb(A)
-        v1 = []
-        for i in range(len(P[0])):
-            v1.append(v[i])
-        v1 = np.array(v1)
-        e = np.ones((len(P[0]),1))
-        vt = v1.T
-        return alpha*P + (1-alpha)*e*vt
-    G = page_rank_main(A,alpha,v)
-    G = ToProb(G)
-    return G
 
 """res
 Vous devez donc calculer les scores PageRank de deux façons différentes :
