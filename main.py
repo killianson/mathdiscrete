@@ -1,4 +1,5 @@
 import numpy as np
+import csv
 
 
 def pageRankLinear(A, alpha, v):
@@ -21,7 +22,7 @@ def pageRankLinear(A, alpha, v):
             for j in A[i]:
                 sum += j
             for j in range(n):
-                P[i, j] = A[i, j] / sum
+                P[i, j] = int(A[i, j]) / sum
         return P
 
     def update_until_converge(P, v):
@@ -48,7 +49,7 @@ def pageRankLinear(A, alpha, v):
 
 
 
-def pageRankPower(A, alpha = 0.9, v=vector):
+def pageRankPower(A, alpha, v):
     """
     pre :
     A : Une matrix numpy, une matrice d'adjacence d'un graph dirigé, pndérer et régulier G
@@ -102,5 +103,21 @@ def main():
     contenant la matrice d’adjacence A du graphe présenté ci-dessous (séparez vos valeurs par
     une virgule et chaque ligne de la matrice par un passage à la ligne), qui exécute le calcul de
     PageRank (via vos méthodes pageRankPower et pageRankLinear) et imprime les résultats
-    """
+    """ 
+    #lit le fichier csv et crée un numpy array avec les données
+    with open('matrice.csv', mode = 'r') as file: 
+        file = csv.reader(file)
+        mat = np.array([lines for lines in file ], int)
+
+    #vecteur de personnalisation 
+    v = np.array([0.1179, 0.1674, 0.2309, 0.1784, 0.0009, 0.1548, 0.049, 0.0315, 0.0105, 0.0587])
+
+    #alpha
+    a = 0.9
+
+    #execution
+
+    #print(pageRankLinear(mat,a,v))
+    #print(pageRankPower(mat,a,v))
     pass
+main()
