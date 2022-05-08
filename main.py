@@ -18,11 +18,11 @@ def pageRankLinear(A, alpha, v):
         n = len(A)
         P = np.zeros((n, n))
         for i in range(n):
-            sum = 0
-            for j in A[i]:
-                sum += j
             for j in range(n):
-                P[i, j] = int(A[i, j]) / sum
+                if A[i,j] != 0:
+                    P[i, j] = A[i, j]/ np.sum(A[i])
+                else : 
+                    P[i,j]=0
         return P
 
     def update_until_converge(P, v):
@@ -90,8 +90,6 @@ def pageRankPower(A, alpha, v):
     for i in range(max_iter):
         v2 = new_v2(M2,v1)
         if np.linalg.norm(v2 - v1,1) < psy:
-            print("fini")
-            print(i)
             break
         v1 = v2
     return v1
@@ -115,9 +113,9 @@ def main():
     #alpha
     a = 0.9
 
-    #execution
+    #execution + print
 
-    #print(pageRankLinear(mat,a,v))
-    #print(pageRankPower(mat,a,v))
+    print("\nPage Rank Linear results : \n", pageRankLinear(mat,a,v), "\n")
+    print("Page Rank Power results : \n", pageRankPower(mat,a,v), "\n")
     pass
 main()
