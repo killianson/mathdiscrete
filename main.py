@@ -2,6 +2,20 @@ import numpy as np
 import csv
 
 
+def get_prob_matrix(A):
+    """
+    Retourne la matrice de probabilité (la somme des éléments de chaque ligne vaut 1)
+    """
+    n = len(A)
+    P = np.zeros((n, n))
+    for i in range(n):
+        for j in range(n):
+            if A[i, j] != 0:
+                P[i, j] = A[i, j] / np.sum(A[i])
+            else:
+                P[i, j] = 0
+    return P
+
 def pageRankLinear(A, alpha=0.9, v=None):
     """
     pre :
@@ -12,19 +26,6 @@ def pageRankLinear(A, alpha=0.9, v=None):
     vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
     """
     if v is None: v = np.array([1/len(A)] * len(A))
-    def get_prob_matrix(A):
-        """
-        Retourne la matrice stochastique (la somme des éléments de chaque ligne vaut 1)
-        """
-        n = len(A)
-        P = np.zeros((n, n))
-        for i in range(n):
-            for j in range(n):
-                if A[i, j] != 0:
-                    P[i, j] = A[i, j] / np.sum(A[i])
-                else:
-                    P[i, j] = 0
-        return P
 
     # Matrice de proba : la somme des éléments de chaque ligne vaut 1
     P = get_prob_matrix(A)
@@ -43,20 +44,6 @@ def pageRankPower(A, alpha=0.9, v=None):
     vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
     """
     if v is None: v = np.array([1 / len(A)] * len(A))
-    def ToProb(A):  # détermine la matrice de probabilité de la matrice A
-        b = []
-        for i in range(len(A)):
-            sum = 0
-            b.append([])
-            for j in range(len(A[i])):
-                sum += A[i][j]
-            for j in range(len(A[i])):
-                if A[i, j] == 0:
-                    b[i].append(0)
-                else:
-                    b[i].append(A[i, j] / sum)
-        p = np.array(b)
-        return p
 
     def vecteur_taille(A, vect=v):  # ajustement de la taille du vecteur pour certains test
         l = []
@@ -65,7 +52,7 @@ def pageRankPower(A, alpha=0.9, v=None):
         v = np.array(l)
         return v.T
 
-    def M_chap(P=ToProb(A), a=alpha):  # Détermine G
+    def M_chap(P, a=alpha):  # Détermine G
         E = np.ones((len(P[0]), len(P)))
         return ((alpha * P) + (1 - alpha) * (E / (len(P))))
 
@@ -75,10 +62,11 @@ def pageRankPower(A, alpha=0.9, v=None):
             sum = 0
             for j in range(len(v)):
                 sum += P[i][j] * v[j]
-            c[i]= sum
+            c[i] = sum
         return c
 
-    M2 = M_chap()
+    prob_matrix = get_prob_matrix(A)
+    M2 = M_chap(prob_matrix)
     v1 = vecteur_taille(A, v)
     max_iter = 100
     psy = 0.005
