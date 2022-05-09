@@ -13,9 +13,8 @@ if __name__ == '__main__':
         print('expected:', expected)
         print('actual:', actual)
 
-    v = np.array([0.2,0.9,0.6])
+    v = np.array([0.2, 0.5, 0.3])
     print(pageRankPower(m1, v=v))
-    print(pageRankLinear(m1, v=v))
 
 
 

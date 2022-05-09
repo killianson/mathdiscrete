@@ -27,13 +27,10 @@ def pageRankLinear(A, alpha=0.9, v=None):
     vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
     """
     if v is None: v = np.array([1 / len(A)] * len(A))
-
-    # Matrice de proba : la somme des éléments de chaque ligne vaut 1
     P = get_prob_matrix(A)
-
     new_matrix = np.transpose((np.identity(len(P)) - alpha * P))
     pr_vector = np.linalg.solve(new_matrix, (1 - alpha) * v)
-    return pr_vector / pr_vector.sum()
+    return pr_vector / pr_vector.sum()  # normalisation du vecteur
 
 
 def pageRankPower(A, alpha=0.9, v=None):
@@ -55,11 +52,8 @@ def pageRankPower(A, alpha=0.9, v=None):
     G = get_google_matrix(prob_matrix)
     loop = True
     while loop:
-        # enregistre la valeur de v
         v_prev = v
-        # nouvelle valeur de v
         v = np.matmul(G.T, v)
-        # normaliser v
         v /= v.sum()
         if abs(v[0] - v_prev[0]) < 10e-10 and abs(v[1] - v_prev[1]) < 10e-10 and abs(
                 v[0] - v_prev[0]) < 10e-10:
@@ -89,7 +83,6 @@ def main():
 
     print("\nPage Rank Linear results : \n", pageRankLinear(mat, a, v), "\n")
     print("Page Rank Power results : \n", pageRankPower(mat, a, v), "\n")
-    pass
 
 
-#main()
+main()
