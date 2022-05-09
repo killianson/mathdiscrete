@@ -69,8 +69,14 @@ def pageRankPower(A, alpha=0.9, v=None):
         E = np.ones((len(P[0]), len(P)))
         return ((alpha * P) + (1 - alpha) * (E / (len(P))))
 
-    def new_v2(P, v):  # détermine p@v, à refaire car on peut pas utiliser numpy pour ça je pense
-        return P @ v
+    def new_v2(P, v):  # détermine p@v
+        c = np.zeros(len(v))
+        for i in range(len(P)):
+            sum = 0
+            for j in range(len(v)):
+                sum += P[i][j] * v[j]
+            c[i]= sum
+        return c
 
     M2 = M_chap()
     v1 = vecteur_taille(A, v)
