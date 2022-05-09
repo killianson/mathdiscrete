@@ -16,6 +16,7 @@ def get_prob_matrix(A):
                 P[i, j] = 0
     return P
 
+
 def pageRankLinear(A, alpha=0.9, v=None):
     """
     pre :
@@ -25,13 +26,14 @@ def pageRankLinear(A, alpha=0.9, v=None):
     post :
     vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
     """
-    if v is None: v = np.array([1/len(A)] * len(A))
+    if v is None: v = np.array([1 / len(A)] * len(A))
 
     # Matrice de proba : la somme des éléments de chaque ligne vaut 1
     P = get_prob_matrix(A)
 
     new_matrix = np.transpose((np.identity(len(P)) - alpha * P))
-    return np.linalg.solve(new_matrix, (1 - alpha) * v)
+    pr_vector = np.linalg.solve(new_matrix, (1 - alpha) * v)
+    return pr_vector / pr_vector.sum()
 
 
 def pageRankPower(A, alpha=0.9, v=None):
@@ -45,37 +47,24 @@ def pageRankPower(A, alpha=0.9, v=None):
     """
     if v is None: v = np.array([1 / len(A)] * len(A))
 
-    def vecteur_taille(A, vect=v):  # ajustement de la taille du vecteur pour certains test
-        l = []
-        for i in range(len(A[0])):
-            l.append(vect[i])
-        v = np.array(l)
-        return v.T
-
-    def M_chap(P, a=alpha):  # Détermine G
-        E = np.ones((len(P[0]), len(P)))
-        return ((alpha * P) + (1 - alpha) * (E / (len(P))))
-
-    def new_v2(P, v):  # détermine p@v
-        c = np.zeros(len(v))
-        for i in range(len(P)):
-            sum = 0
-            for j in range(len(v)):
-                sum += P[i][j] * v[j]
-            c[i] = sum
-        return c
+    def get_google_matrix(P):  # Détermine G
+        e = np.ones(len(P))
+        return (alpha * P) + (1 - alpha) * np.matmul(e, v.T)
 
     prob_matrix = get_prob_matrix(A)
-    M2 = M_chap(prob_matrix)
-    v1 = vecteur_taille(A, v)
-    max_iter = 100
-    psy = 0.005
-    for i in range(max_iter):
-        v2 = new_v2(M2, v1)
-        if np.linalg.norm(v2 - v1, 1) < psy:
-            break
-        v1 = v2
-    return v1
+    G = get_google_matrix(prob_matrix)
+    loop = True
+    while loop:
+        # enregistre la valeur de v
+        v_prev = v
+        # nouvelle valeur de v
+        v = np.matmul(G.T, v)
+        # normaliser v
+        v /= v.sum()
+        if abs(v[0] - v_prev[0]) < 10e-10 and abs(v[1] - v_prev[1]) < 10e-10 and abs(
+                v[0] - v_prev[0]) < 10e-10:
+            loop = False
+    return v
 
 
 def main():
@@ -103,6 +92,4 @@ def main():
     pass
 
 
-main()
-
-
+#main()
