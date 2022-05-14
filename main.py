@@ -4,7 +4,7 @@ import csv
 
 def get_prob_matrix(A):
     """
-    Retourne la matrice de probabilité (la somme des éléments de chaque ligne vaut 1)
+    Retourne la matrice des probabilités de transition (la somme des éléments de chaque ligne vaut 1)
     """
     n = len(A)
     P = np.zeros((n, n))
@@ -17,43 +17,51 @@ def get_prob_matrix(A):
     return P
 
 
-def pageRankLinear(A, alpha=0.9, v=None):
+def pageRankLinear(A, alpha, v):
     """
-    pre :
+    pré :
     A : Une matrix numpy, une matrice d'adjacence d'un graphe dirigé, pondéré et régulier G
     alpha : un float ,qui est le paramètre de téléportation(entre 0 et 1 ) 0.9 par défaut
     v : Vecteur de personalisation
     post :
     vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
     """
-    if v is None: v = np.array([1 / len(A)] * len(A))
+    # matrice des probabilités de transition
     P = get_prob_matrix(A)
+
+    # résolution de l'équation
     new_matrix = np.transpose((np.identity(len(P)) - alpha * P))
     pr_vector = np.linalg.solve(new_matrix, (1 - alpha) * v)
+
     return pr_vector / pr_vector.sum()  # normalisation du vecteur
 
 
-def pageRankPower(A, alpha=0.9, v=None):
+def pageRankPower(A, alpha, v):
     """
-    pre :
-    A : Une matrix numpy, une matrice d'adjacence d'un graph dirigé, pndérer et régulier G
-    alpha : un float ,qui est le paramètre de téléportation(entre 0 et 1 ) 0.9 par défaut 
+    pré :
+    A : Une matrix numpy, une matrice d'adjacence d'un graph dirigé, pondéré et régulier G
+    alpha : un float, qui est le paramètre de téléportation (entre 0 et 1) 0.9 par défaut
     v : Vecteur de personalisation
     post : 
     vecteur x contenant les scores d'importance des noeuds ordonnés dans le même ordre que la matrice d'adjacence
     """
-    if v is None: v = np.array([1 / len(A)] * len(A))
 
     def get_google_matrix(P):  # Détermine G
         e = np.ones(len(P))
         return (alpha * P) + (1 - alpha) * np.matmul(e, v.T)
 
-    prob_matrix = get_prob_matrix(A)
-    G = get_google_matrix(prob_matrix)
+    # matrice des probabilités de transition
+    P = get_prob_matrix(A)
+
+    # matrice Google
+    G = get_google_matrix(P)
+
+    # mise à jour du vecteur de personnalisation jusqu'à convergence
     loop = True
+    i = 1
     while loop:
         v_prev = v
-        v = np.matmul(G.T, v)
+        v = np.matmul(v, G)
         v /= v.sum()
         if abs(v[0] - v_prev[0]) < 10e-10 and abs(v[1] - v_prev[1]) < 10e-10 and abs(
                 v[0] - v_prev[0]) < 10e-10:
@@ -80,9 +88,9 @@ def main():
     a = 0.9
 
     # execution + print
-
     print("\nPage Rank Linear results : \n", pageRankLinear(mat, a, v), "\n")
     print("Page Rank Power results : \n", pageRankPower(mat, a, v), "\n")
 
 
-main()
+if __name__ == '__main__':
+    main()
