@@ -52,17 +52,19 @@ def pageRankPower(A, alpha, v):
 
     # matrice des probabilités de transition
     P = get_prob_matrix(A)
-
+    print("matrice de proba\n", P, "\n\n") #--------------------------print--funct--------------------------------
     # matrice Google
     G = get_google_matrix(P)
-
+    print("matrice Google\n", G, "\n\n") #--------------------------print--funct--------------------------------
     # mise à jour du vecteur de personnalisation jusqu'à convergence
     loop = True
-    i = 1
+    i = 0
     while loop:
         v_prev = v
         v = np.matmul(v, G)
         v /= v.sum()
+        i+=1
+        if i<4 : print("matrice itérations vecteurs des score numéro ",i,":\n", v, "\n")#--------------------------print--funct--------------------------------
         if abs(v[0] - v_prev[0]) < 10e-10 and abs(v[1] - v_prev[1]) < 10e-10 and abs(
                 v[0] - v_prev[0]) < 10e-10:
             loop = False
